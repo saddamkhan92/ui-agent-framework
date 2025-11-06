@@ -1,0 +1,21 @@
+{
+  "steps": [
+    {
+      "action": "go",
+      "url": "https://duckduckgo.com"
+    },
+    {
+      "action": "type",
+      "selector": "input[name='q']",
+      "text": "OpenAI"
+    },
+    {
+      "action": "press_enter",
+      "selector": "input[name='q']"
+    },
+    {
+      "action": "screenshot",
+      "path": "output/duckduckgo_search.png"
+    }
+  ]
+}
