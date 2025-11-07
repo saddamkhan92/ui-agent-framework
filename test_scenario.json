@@ -1,19 +1,23 @@
 {
   "steps": [
     {
+      "name": "Open DuckDuckGo homepage",
       "action": "go",
       "url": "https://duckduckgo.com"
     },
     {
+      "name": "Type search query 'OpenAI'",
       "action": "type",
       "selector": "input[name='q']",
       "text": "OpenAI"
     },
     {
+      "name": "Press Enter to search",
       "action": "press_enter",
       "selector": "input[name='q']"
     },
     {
+      "name": "Take screenshot of results",
       "action": "screenshot",
       "path": "output/duckduckgo_search.png"
     }
