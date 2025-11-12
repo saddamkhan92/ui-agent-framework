@@ -1,4 +1,0 @@
-Running step: Open DuckDuckGo homepage
-Running step: Type search query 'OpenAI'
-Running step: Press Enter to search
-Running step: Take screenshot of results

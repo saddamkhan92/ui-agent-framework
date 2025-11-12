@@ -1,48 +1,40 @@
-import sys
+# tests/test_scenario_executor.py
 import os
 import pytest
-import json
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from scenario_executor import run_scenario, load_scenario, setup_browser
-from utils.allure_helper import write_environment_info
+from scenario_executor import setup_browser, load_scenario, run_scenario
+from utils.allure_helper import write_environment_info, start_step, attach_screenshot
 
-# ✅ Add the project root to sys.path so imports like "utils" work
-PROJECT_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if PROJECT_ROOT not in sys.path:
-    sys.path.insert(0, PROJECT_ROOT)
-
-# ✅ Now these imports will work
-from scenario_executor import run_scenario
-from utils.allure_helper import attach_screenshot, attach_text
-
-
-@pytest.fixture(scope="session")
+@pytest.fixture
 def driver():
-    """
-    Fixture to initialize and quit the browser once per test session.
-    """
+    """Setup and teardown of the browser driver."""
     driver = setup_browser()
     yield driver
     driver.quit()
 
-
 @pytest.mark.parametrize("scenario_file", ["test_scenario.json"])
 def test_duckduckgo_search(driver, scenario_file):
     """
-    Runs the DuckDuckGo search scenario and generates Allure report.
+    Run DuckDuckGo search scenario and generate Allure report.
     """
-    # Load scenario data from JSON
-    scenario = load_scenario(scenario_file)
-
-    # Write environment details
+    # --- Allure environment info ---
     env_info = {
         "Browser": "Chrome",
-        "Environment": "Local",
-        "Tester": "UI Agent Framework"
+        "Framework": "Selenium + Pytest + Allure",
+        "Scenario": scenario_file
     }
     write_environment_info(env_info)
 
-    # Run the scenario steps using Selenium
-    run_scenario(driver, scenario)
+    # --- Ensure output directory exists ---
+    os.makedirs("output", exist_ok=True)
+
+    # --- Load and run scenario ---
+    with start_step(f"Load scenario: {scenario_file}"):
+        scenario_data = load_scenario(scenario_file)
+
+    with start_step("Execute scenario actions"):
+        run_scenario(driver, scenario_data)
+
+    # --- Attach final screenshot to Allure report ---
+    screenshot_path = "output/final_state.png"
+    driver.save_screenshot(screenshot_path)
+    attach_screenshot(screenshot_path, "Final Screenshot")
